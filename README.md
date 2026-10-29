@@ -32,7 +32,7 @@ Each `flow_images/*/` folder holds nine views plus `numbers.txt`.
 ## Videos
 
 The averages above hide most of what the water does. `src/flow_anim.py` draws every 0.2 s of a run and joins the
-frames: 20 s of tank time at half speed, one video per view. The "starved" patches turn out to get swept every few
+frames: 20 s of tank time played at 2x speed, one 10 s video per view. The "starved" patches turn out to get swept every few
 seconds; the front-glass jet split wanders. Videos are not in git; these five are hosted by GitHub.
 
 Side cut through the main rock (far):

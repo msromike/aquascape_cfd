@@ -201,8 +201,9 @@ EDGES = {           # axis labels, then the walls at the bottom, top, left and r
 }
 
 
-CORAL_BANDS = [(2, "starved, under 2", "#2b1d4e"), (4, "low, 2 to 4", "#3d6fb4"), (8, "LPS, 4 to 8", "#3daa66"),
-               (12, "SPS, 8 to 12", "#f0c330"), (16, "hot, over 12", "#de4a2c")]   # in/s at the coral; reef-keeping rules of thumb
+CORAL_BANDS = [(2, "starved, under 2 in/s", "#2b1d4e"), (4, "low, 2 to 4 in/s", "#3d6fb4"),
+               (8, "LPS, 4 to 8 in/s", "#3daa66"), (12, "SPS, 8 to 12 in/s", "#f0c330"),
+               (16, "hot, over 12 in/s", "#de4a2c")]   # in/s at the coral; reef-keeping rules of thumb
 
 
 def band_colors():
@@ -212,9 +213,11 @@ def band_colors():
     return cmap, BoundaryNorm([0] + [b for b, _, _ in CORAL_BANDS], cmap.N)
 
 
-def band_colorbar(fig, m, ax):
+def band_colorbar(fig, m, ax, title="mean speed,\nin/s"):
+    """The coral bands, titled across the top so the units read first."""
     edges = [0] + [b for b, _, _ in CORAL_BANDS]
-    cb = fig.colorbar(m, ax=ax, shrink=0.9, extend="max", label="mean speed, in/s")
+    cb = fig.colorbar(m, ax=ax, shrink=0.9, extend="max")
+    cb.ax.set_title(title, fontsize=11, pad=34)
     cb.set_ticks([(a + b) / 2 for a, b in zip(edges, edges[1:])])
     cb.set_ticklabels([w for _, w, _ in CORAL_BANDS])
     return cb
@@ -319,7 +322,8 @@ def pump_marks(ax, kind, meta):
         d = {"x": 0.0, "y": -math.sin(aim), "z": 0.0}
         d[push[1]] += s * math.cos(aim)
         way = "out at the front glass" if aim_deg >= 45 else {"-x": "left", "+x": "right", "-z": "down", "+z": "up"}[push]
-        words.append(f"pump {x:.0f} in from the left pane: " + (f"points {way}" if running else "off"))
+        side = "left" if x < INSIDE_L_IN / 2 else "right"
+        words.append(f"{side} pump: " + (f"points {way}" if running else "off"))
         h0, v0, dh, dv = {"plan": (x, yc, d["x"], d["y"]), "front": (x, z, d["x"], d["z"])}.get(kind, (yc, z, d["y"], d["z"]))
         if running and math.hypot(dh, dv) > 0.2:
             (h_lo, h_hi), (v_lo, v_hi) = ax.get_xlim(), ax.get_ylim()
@@ -412,9 +416,7 @@ def draw_nine(case, t, path_for, title, vmax, stamp=""):
         m = slice_panel(ax, kind, img, h, v, uh, uv, vmax, dx_in, textwrap.fill(title, 80) + f"\n{words}{stamp}", bands=True,
                         sand_in=sand_in, behind={"end": silhouette, "front": front_outline}.get(kind))
         pump_marks(ax, kind, meta)
-        cb = band_colorbar(fig, m, ax)
-        if t is not None:
-            cb.set_label("speed at this instant, in/s")
+        band_colorbar(fig, m, ax, "mean speed,\nin/s" if t is None else "speed now,\nin/s")
         fig.savefig(path_for(name), dpi=DPI)
         plt.close(fig)
 

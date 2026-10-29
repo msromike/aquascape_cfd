@@ -569,7 +569,8 @@ def set_box(a):
     draw(a)
 
 
-# ---- STL: each rod from the bottom glass (or its undercut) to its top, one closed shell, tank millimetres
+# ---- STL: each rod from the bottom glass (or its undercut) to its top, one closed shell, millimetres around the tank
+# center (x, y from the middle of the tank, z from the bottom glass); the case's place.json moves or turns it at load
 
 def stl(a):
     d = folder(a.name)
@@ -579,7 +580,7 @@ def stl(a):
     def quad(p, n):
         # 0.1 mm off the inch grid: on the 4 mm lattice 10 in and 30 in fall on cell centers, and the voxelizer's rays
         # miscount on a rod edge there (a phantom wall along y = 10 in, 2026-10-29)
-        p = [np.array(v, dtype=float) * cfd.IN * 1000.0 + 0.1 for v in p]
+        p = [(np.array(v, dtype=float) - (L / 2, W / 2, 0.0)) * cfd.IN * 1000.0 + 0.1 for v in p]   # tank-center datum
         for t in ((p[0], p[1], p[2]), (p[0], p[2], p[3])):
             if np.dot(np.cross(t[1] - t[0], t[2] - t[0]), n) < 0:
                 t = (t[0], t[2], t[1])

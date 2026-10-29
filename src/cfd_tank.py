@@ -18,7 +18,7 @@ Lid: FluidX3D walls are bounce-back only, so the water line is a no-slip lid; it
 Pumps: --pumps "x:way,x:way", upright Maxspect XF330 tubes on their mounts off the back glass, x in from the left pane,
 pointing left, right or forward (out at the front glass), or off (body only). Height: --gyre-z-in, default mid-water.
 Geometry GYRE_* from notes/xf330_outlet_geometry.md; rated flow out the slots.
-Rock: binary STL in tank millimetres (x from the left pane, y from the front glass, z from the bottom glass), from rock_rods.py.
+Rock: binary STL in millimetres around the tank center (x from the left pane, y from the front glass, z from the bottom glass), from rock_rods.py.
 RFG: off unless --rfg-tilt; 20 deg (15 to 25) traced off the patent drawing, snap and hold times from US 11,071,990
 (notes/rfg_jet_pattern.md). The return enters at the 0.68 in throat.
 Warm start: --warm CASE starts the fluid from that case's last snapshot; same dx only.
@@ -26,6 +26,8 @@ FluidX3D: the clone named by $FLUIDX3D, else a FluidX3D folder beside this folde
 """
 import argparse
 import csv
+import json
+import math
 import os
 import re
 import subprocess
@@ -90,6 +92,30 @@ def prepare(fp16s):
     print("setup.cpp and defines.hpp set (FP16S " + ("on" if fp16s else "off, FP32") + "). Rebuild FluidX3D.")
 
 
+def placement(stl):
+    """The case's rock placement: place.json beside rock.stl, {"move_mm": [x, y, z], "turn_deg": a}, both optional.
+    Turns about the rock's own center (seen from above, positive is counterclockwise), then moves; x right, y back, z up.
+    Returns the 3x3 turn (row by row) and the shift in mm that put it there."""
+    import numpy as np
+    f = Path(stl).parent / "place.json"
+    p = json.loads(f.read_text()) if f.exists() else {}
+    move = [float(v) for v in p.get("move_mm", [0, 0, 0])]
+    a = math.radians(float(p.get("turn_deg", 0)))
+    c, s = math.cos(a), math.sin(a)
+    m = [c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0]
+    raw = Path(stl).read_bytes()
+    tri = np.frombuffer(raw, dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")], offset=84)
+    v = tri["v"].reshape(-1, 3)
+    cx, cy = (v[:, 0].min() + v[:, 0].max()) / 2, (v[:, 1].min() + v[:, 1].max()) / 2
+    shift = [cx - (c * cx - s * cy) + move[0], cy - (s * cx + c * cy) + move[1], move[2]]   # keep the center, then move
+    px, py = c * v[:, 0] - s * v[:, 1] + shift[0], s * v[:, 0] + c * v[:, 1] + shift[1]
+    half_l, half_w = INSIDE_L_IN / 2 * IN * 1000, INSIDE_W_IN / 2 * IN * 1000   # mm
+    over = max(px.max() - half_l, -half_l - px.min(), py.max() - half_w, -half_w - py.min(), 0.0)
+    if over > 0:
+        print(f"WARNING {f.name}: the placed rock goes {over:.0f} mm through the glass; the run cuts it off there")
+    return m, shift
+
+
 def openings(return_gph, nozzle_d_in):
     holes = {r["hole_id"]: r for r in csv.DictReader(DRILL.open())}
 
@@ -140,7 +166,8 @@ def run(a):
         path = Path(p).resolve()
         if not path.exists():
             sys.exit(f"no {path}")
-        lines.append(f"stl {path.as_posix()}")
+        m, shift = placement(path)
+        lines.append("stl " + " ".join(f"{v:.6f}" for v in m + shift) + f" {path.as_posix()}")
     if a.rfg_tilt > 0:
         lo, hi = (float(v) for v in a.rfg_dwell.split(","))
         lines.append(f"rfg {a.rfg_tilt} {lo} {hi} {a.rfg_ramp} {a.rfg_seed}")

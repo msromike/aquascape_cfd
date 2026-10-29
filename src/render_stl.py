@@ -1,10 +1,12 @@
-"""Render any case's rock.stl (tank millimetres) in the tank: front-on, and from the right front corner.
+"""Render any case's rock.stl (millimetres around the tank center, placed by the case's place.json) in the tank: front-on, and from the right front corner.
 
     blender --background --factory-startup --python src/render_stl.py -- ABSOLUTE/cases/CASE/rock.stl ABSOLUTE/cases/CASE/rock
 (absolute paths: Blender resolves relative ones against the drive root)
 """
+import json
 import math
 import sys
+from pathlib import Path
 
 import bmesh
 import bpy
@@ -38,6 +40,16 @@ scene = bpy.context.scene
 bpy.ops.wm.stl_import(filepath=args[0])
 rock = bpy.context.selected_objects[0]
 rock.scale = (1 / 25.4,) * 3   # mm to the scene's inches
+place_file = Path(args[0]).parent / "place.json"
+place = json.loads(place_file.read_text()) if place_file.exists() else {}
+move = [float(v) / 25.4 for v in place.get("move_mm", [0, 0, 0])]
+turn = math.radians(float(place.get("turn_deg", 0)))
+xs = [v.co.x / 25.4 for v in rock.data.vertices]
+ys = [v.co.y / 25.4 for v in rock.data.vertices]
+cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+c, s = math.cos(turn), math.sin(turn)
+rock.rotation_euler = (0.0, 0.0, turn)   # about the rock's own center, as cfd_tank.py does, then the move
+rock.location = (L / 2 + cx - (c * cx - s * cy) + move[0], W / 2 + cy - (s * cx + c * cy) + move[1], move[2])
 rock.data.materials.append(mat("rock", (0.86, 0.80, 0.68)))
 box("sand", 0, L, 0, W, 0, SAND, (0.80, 0.72, 0.56))
 t = 0.12

@@ -21,8 +21,10 @@ regenerate or change them. A new scenario is a copy of a case folder, renamed; t
 4. `views` loads `u_avg.bin` and draws nine pictures (`draw_nine`); `summary()` makes the numbers.
 
 Units: the solver works in metres and seconds; every number a person sees is inches and in/s. `IN = 0.0254`.
-Rock STLs are in millimetres, tank coordinates (x from the left pane, y from the front glass, z from the bottom
-glass), so viewers open them at true size; `cfd_tank.cpp` reads them with a 0.001 scale.
+Rock STLs are in millimetres around the tank center (x right and y back from the middle of the tank, z up from the
+bottom glass), so viewers open them at true size, centered. Each case's `place.json` moves (`move_mm`) and turns
+(`turn_deg`, about the rock's own center, counterclockwise from above) the rock at load, in the run and in
+`render_stl.py` alike; the STL itself never changes. `cfd_tank.py` warns when a placement pushes rock through the glass.
 
 ## Settings that were checked, and what they cost
 

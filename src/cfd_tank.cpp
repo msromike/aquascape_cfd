@@ -53,7 +53,8 @@ struct Case {
 	std::map<string, string> kv;
 	vector<Disc> discs;
 	vector<Gyre> gyres;
-	vector<string> stls;
+	struct Stl { string path; float m[9]; float shift[3]; }; // turn matrix (row by row) and shift in mm, tank-center datum
+	vector<Stl> stls;
 	Rfg rfg;
 	string warm;
 	uint warm_N[3] = {0u, 0u, 0u};
@@ -99,10 +100,12 @@ inline Case read_case(const string& path) {
 			g.push = push[1]=='x' ? 0u : 2u;
 			if((g.axis=='x')==(g.push==0u)) print_error("gyre "+g.name+": push must cross the long side");
 			c.gyres.push_back(g);
-		} else if(key=="stl") {
-			string p;
-			std::getline(ss >> std::ws, p);
-			c.stls.push_back(p);
+		} else if(key=="stl") { // stl m00 m01 m02 m10 m11 m12 m20 m21 m22 sx sy sz path
+			Case::Stl s;
+			for(uint i=0u; i<9u; i++) ss >> s.m[i];
+			ss >> s.shift[0] >> s.shift[1] >> s.shift[2];
+			std::getline(ss >> std::ws, s.path);
+			c.stls.push_back(s);
 		} else if(key=="rfg") {
 			float tilt_deg = 0.0f;
 			ss >> tilt_deg >> c.rfg.dwell_min >> c.rfg.dwell_max >> c.rfg.ramp >> c.rfg.seed;
@@ -226,10 +229,12 @@ void main_setup() { // reef display flow; required extensions in defines.hpp: EQ
 
 	LBM lbm(Nx, Ny, Nz, lbm_nu);
 	// rock first: voxelizing reads flags back from the device, so the host edits below must come after it
-	// STL in tank millimetres (what viewers and slicers assume); lattice coordinate = cell index, and cell j's center is
-	// (j-0.5)*dx, so lattice = mm/1000/dx + 0.5
-	for(const string& p : c.stls) {
-		Mesh* mesh = read_stl(p, 0.001f/dx, float3x3(1.0f), float3(0.5f));
+	// STL in millimetres around the tank center (x, y from the middle, z from the bottom glass), turned and shifted by the
+	// case's placement; lattice coordinate = cell index, and cell j's center is (j-0.5)*dx, so lattice = metres/dx + 0.5
+	for(const reef::Case::Stl& s : c.stls) {
+		const string& p = s.path;
+		const float3 at = float3((0.5f*Lx+0.001f*s.shift[0])/dx+0.5f, (0.5f*Ly+0.001f*s.shift[1])/dx+0.5f, 0.001f*s.shift[2]/dx+0.5f);
+		Mesh* mesh = read_stl(p, 0.001f/dx, float3x3(s.m[0], s.m[1], s.m[2], s.m[3], s.m[4], s.m[5], s.m[6], s.m[7], s.m[8]), at);
 		print_info("Rock "+p+": "+reef::fmt(dx*(mesh->pmax.x-mesh->pmin.x)/0.0254f, 1)+" x "+reef::fmt(dx*(mesh->pmax.y-mesh->pmin.y)/0.0254f, 1)+" x "+reef::fmt(dx*(mesh->pmax.z-mesh->pmin.z)/0.0254f, 1)+" in");
 		lbm.voxelize_mesh_on_device(mesh);
 		delete mesh;
@@ -296,7 +301,7 @@ void main_setup() { // reef display flow; required extensions in defines.hpp: EQ
 		m << "Nx " << Nx << "\nNy " << Ny << "\nNz " << Nz << "\ndx_m " << dx << "\nsand_m " << sand << "\nt_end_s " << t_end << "\n";
 		for(const reef::Disc& d : c.discs) m << "disc " << d.name << " " << (d.inlet ? "inlet" : "outlet") << " " << d.y << " " << d.z << " " << d.d << " " << d.q << " " << d.cells << " " << d.si_u << "\n";
 		for(const reef::Gyre& g : c.gyres) m << "gyre " << g.name << " " << g.x << " " << g.z << " " << g.axis << " " << (g.sign<0.0f ? "-" : "+") << (g.push==0u ? "x" : "z") << " " << g.q << " " << g.L << " " << g.td << " " << g.yc << " " << g.aim*180.0f/pif << " " << g.cells_in << " " << g.u_in << " " << g.cells_out << " " << g.u_out << "\n";
-		for(const string& p : c.stls) m << "stl " << p << "\n";
+		for(const reef::Case::Stl& s : c.stls) m << "stl " << s.path << "\n";
 	}
 	std::ofstream rfg_log;
 	if(c.rfg.on) { rfg_log.open(out+"rfg.csv"); rfg_log << "t_s,position\n"; }

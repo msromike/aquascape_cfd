@@ -95,6 +95,18 @@ holding it up. `stl` writes the shape for the flow run.
 `cases/2_two_bommies/rock/` is the shape in the pictures: heights.csv and bottoms.csv are the whole record. A new
 case starts as a copy of an old case folder, renamed.
 
+To move or turn a rock without touching it, edit the case's `place.json`:
+
+```
+{
+  "move_mm": [15, 0, 0],
+  "turn_deg": 10
+}
+```
+
+`move_mm` is right, back, up; `turn_deg` turns it about its own center, counterclockwise seen from above. The
+`rock.stl` files are millimetres around the middle of the tank, so any STL viewer shows them centered at true size.
+
 ## What is in the pictures
 
 - Color: 20 s mean speed, in inches per second, in five bands: starved (under 2), low (2-4), LPS (4-8), SPS (8-12),

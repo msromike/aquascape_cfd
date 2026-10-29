@@ -1,0 +1,4 @@
+hole_id,description,x_from_back_in,y_from_top_in,dia_mm,dia_in,fitting,application
+D1,PRIMARY OVERFLOW PASS-THROUGH,3.75,3.25,60.0,2.362,1.5" Bulkhead (Modular Marine),Modular Marine 1600 Overflow
+D2,SECONDARY OVERFLOW PASS-THROUGH,14.50,3.25,60.0,2.362,1.5" Bulkhead (Modular Marine),Modular Marine 1600 Overflow
+R1,MAIN RETURN (VCA RFG MODULAR),20.75,3.25,35.0,1.378,3/4" Bulkhead (Lifegard),VCA RFG Nozzle (Dual 1/2" or Single 3/4")

@@ -1,0 +1,8 @@
+Open tank, no rock: corner pumps 12.3 in up, left pump points forward, right pump points left, both on; RFG 20 deg
+tank mean: 5.4 in/s
+sand band, 0 to 3 in up: 4.7 in/s
+fastest water 0.5 in over the sand: 12 in/s
+dead sand 1 in up, under 1 in/s: 6 in², centered 28 in from the left pane, 15 in from the front glass
+water under 1 in/s: 1%
+water under 3 in/s: 13%
+case nr90_corners_12p3_forward_left, mean over 70-90 s (81 samples)

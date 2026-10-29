@@ -108,11 +108,11 @@ case starts as a copy of an old case folder, renamed.
 
 ```
 src/        cfd_tank.py (prepare, run, views), cfd_tank.cpp (the FluidX3D setup), rock_rods.py (+ rock_rods_blender.py),
-            flow_anim.py (videos)
+            flow_anim.py (videos), nsa_rock.py (builds case 3's rock), render_stl.py (renders any rock.stl in Blender)
 tank/       holes.csv: return and drain positions
 notes/      how the pump and nozzle geometry were measured off vendor pictures, with the scripts
-cases/      one folder per scenario: 1_open_tank, 2_two_bommies, 3_nsa_test; each rock/ (rods or the script that
-            made it, views, renders), rock.stl (what the solver loads), flow/ (nine views, numbers.txt; videos ignored)
+cases/      one folder per scenario: 1_open_tank, 2_two_bommies, 3_nsa_test; each rock/ (rods, views, renders),
+            rock.stl (what the solver loads), flow/ (nine views, numbers.txt; videos ignored). Data only; code is in src/
 ```
 
 ## License

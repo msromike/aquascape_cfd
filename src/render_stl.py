@@ -1,6 +1,6 @@
-"""Render an STL rock (tank metres) in the tank: front-on like the photo, and from the right front corner.
+"""Render any case's rock.stl (tank metres) in the tank: front-on, and from the right front corner.
 
-    blender --background --factory-startup --python cases/3_nsa_test/render_rock.py -- ABSOLUTE/rock.stl ABSOLUTE/rock
+    blender --background --factory-startup --python src/render_stl.py -- ABSOLUTE/cases/CASE/rock.stl ABSOLUTE/cases/CASE/rock
 (absolute paths: Blender resolves relative ones against the drive root)
 """
 import math

@@ -1,7 +1,7 @@
 """Proof of concept: an open, "NSA"-style scape copied by eye from one photo of a build video, as a watertight STL for
-the flow model, for comparison with the solid two_bommies rock. Renders: render_rock.py beside it, into rock/.
+the flow model, for comparison with the solid two_bommies rock. Render it with render_stl.py.
 
-    python cases/3_nsa_test/make_rock.py      -> rock.stl beside it (tank metres; needs trimesh and manifold3d)
+    python src/nsa_rock.py      -> cases/3_nsa_test/rock.stl (tank metres; needs trimesh and manifold3d)
 
 Read off the photo at about 46 px/in (table width ~ tank length), front-on, perspective ignored:
 left: a pillar with a boulder cap, a low mound, an arm bridging pillar to mound high up, a low rail between them, the arch
@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
-HERE = Path(__file__).resolve().parent   # this case
+CASE = Path(__file__).resolve().parents[1] / "cases" / "3_nsa_test"
 IN = 0.0254
 SAND = 2.5
 rng = np.random.default_rng(11)
@@ -81,6 +81,6 @@ print(f"watertight {rock.is_watertight}, {len(rock.faces)} faces, volume over th
       f"{trimesh.boolean.intersection([rock, box.copy().apply_translation((0, 0, 1.0))], engine='manifold').volume:.0f} in3")
 lo, hi = rock.bounds
 print(f"x {lo[0]:.1f}-{hi[0]:.1f}, y {lo[1]:.1f}-{hi[1]:.1f}, z {lo[2]:.1f}-{hi[2]:.1f} in (top {hi[2] - SAND:.1f} in over the sand)")
-out = HERE / "rock.stl"
+out = CASE / "rock.stl"
 rock.copy().apply_scale(IN).export(out)
 print(out)

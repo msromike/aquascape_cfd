@@ -37,23 +37,23 @@ seconds; the front-glass jet split wanders. Videos are not in git; these five ar
 
 Side cut through the main rock (far):
 
-https://github.com/user-attachments/assets/3206b5c0-3424-4e4e-9eac-82374bf0f045
+https://github.com/user-attachments/assets/597150b7-91bd-4960-9b3c-4bdcb6e5fb64
 
 Side cut through the overhang (middle):
 
-https://github.com/user-attachments/assets/1174b636-ddf7-4255-8576-33cfb77a4fa6
+https://github.com/user-attachments/assets/48004576-23b3-4228-a583-2229f0e54342
 
 Side cut through the right rock (near):
 
-https://github.com/user-attachments/assets/40880cc2-a4ac-4e59-8525-4c42911cec82
+https://github.com/user-attachments/assets/69d7d781-2ac6-481d-a29f-6e55cc72a262
 
 Through the front glass, mid-depth:
 
-https://github.com/user-attachments/assets/b514192b-25f4-480b-a2fe-b85198d9533a
+https://github.com/user-attachments/assets/d2c2f51c-d70c-4568-a903-16ca76596a7f
 
 Looking down, 1 in over the sand:
 
-https://github.com/user-attachments/assets/75cc8db0-5695-4020-b8a1-f0eec0a51c4f
+https://github.com/user-attachments/assets/df88e1ec-7b96-4f2d-b04e-c0fe462247af
 
 ## What you need
 

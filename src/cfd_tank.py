@@ -2,8 +2,8 @@
 
     python src/cfd_tank.py prepare [--fp32]
     python src/cfd_tank.py run --case open_tank --t 90 --pumps "3:forward,32.5:left" --rfg-tilt 20
-    python src/cfd_tank.py run --case rock --t 60 --warm open_tank --pumps "3:forward,32.5:left" --rfg-tilt 20 --stl stl/rods_two_bommies.stl
-    python src/cfd_tank.py views --case rock --out flow_images/2_two_bommies --title "words for the first line of every picture"
+    python src/cfd_tank.py run --case rock --t 60 --warm open_tank --pumps "3:forward,32.5:left" --rfg-tilt 20 --stl cases/2_two_bommies/rock.stl
+    python src/cfd_tank.py views --case rock --out cases/2_two_bommies/flow --title "words for the first line of every picture"
 
 prepare points FluidX3D/src/setup.cpp at src/cfd_tank.cpp and sets defines.hpp; rebuild FluidX3D after it.
 run writes FluidX3D/bin/reef_case.txt and runs the exe; no rebuild between cases. Raw fields stay in FluidX3D/bin/reef_out/<case>.

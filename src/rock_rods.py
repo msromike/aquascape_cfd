@@ -1,19 +1,20 @@
 """Rock as rods: a 1 in grid of square rods standing on the sand, each its own height. Shaped by painting on the views.
 
-    python src/rock_rods.py start NAME [--core CASE]   (rods to the water line everywhere but the glass clearance; the slow
+    python src/rock_rods.py start CASE [--core RUN]   (rods to the water line everywhere but the glass clearance; the slow
         core of that open-tank run drawn dashed on the top view, none if the run is not there)
-    python src/rock_rods.py update NAME   (reads the paint on the three views, redraws them)
-    python src/rock_rods.py draw NAME
-    python src/rock_rods.py set NAME --x 20:24 [--y 3:19] [--h 0] [--cap]   (a box of rods to a height; 0 takes them
+    python src/rock_rods.py update CASE   (reads the paint on the three views, redraws them)
+    python src/rock_rods.py draw CASE
+    python src/rock_rods.py set CASE --x 20:24 [--y 3:19] [--h 0] [--cap]   (a box of rods to a height; 0 takes them
         out; --cap slices only the taller ones down)
-    python src/rock_rods.py set NAME --x 8:14 --y 3:5 --bottom 4   (undercut: open water under those rods, 4 in up)
-    python src/rock_rods.py stl NAME       (stl/rods_NAME.stl, for cfd_tank.py --stl)
+    python src/rock_rods.py set CASE --x 8:14 --y 3:5 --bottom 4   (undercut: open water under those rods, 4 in up)
+    python src/rock_rods.py stl CASE       (cases/CASE/rock.stl, for cfd_tank.py --stl)
 
-Out: rock_rods/NAME/: top.png, front.png, side.png and a copy of each to paint on,
+A case is a folder, cases/CASE/: rock/ (this tool's), rock.stl, flow/ (cfd_tank.py views --out cases/CASE/flow). A new
+case is a copy of an old one, renamed.
+Out: cases/CASE/rock/: top.png, front.png, side.png and a copy of each to paint on,
 top_edit.png, front_edit.png, side_edit.png; corner_left_front.png, corner_right_front.png, corner_right_back.png (Blender; not for paint); heights.csv (inches over the sand, back row first, as the top view reads),
 bottoms.csv (where a rod starts, inches over the sand: 0 on the sand, more for a ledge or a swim-through; absent means
 all 0), core.csv (the slow core of the open-tank run, start --core), history/ (heights and bottoms before each change).
-Every draw also copies the clean views and the corners to rock_images/NAME/.
 Paint on the _edit copies (Paint, any brush or fill); an outline counts as filled. update reads them, then redraws both.
 One color per meaning, the same in the drawing and the legend; eyedrop it. Paint is whatever differs from the clean copy
 the _edit canvas was made from (history/base_<view>.png).
@@ -36,9 +37,7 @@ from scipy import ndimage
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cfd_tank as cfd  # noqa: E402
 
-OUT = cfd.ROOT / "rock_rods"
-STL = cfd.ROOT / "stl"
-IMAGES = cfd.ROOT / "rock_images"
+CASES = cfd.ROOT / "cases"
 L, W, SAND, WATER = cfd.INSIDE_L_IN, cfd.INSIDE_W_IN, cfd.SAND_IN_DEFAULT, cfd.WATER_IN
 FULL = WATER - SAND
 NX, NY = int(np.ceil(L)), int(np.ceil(W))   # rods; the last column and row are 0.5 in wide
@@ -77,7 +76,7 @@ def cell(i, j):
 
 
 def folder(name):
-    return OUT / name
+    return CASES / name / "rock"
 
 
 def read_grid(path):
@@ -398,10 +397,6 @@ def draw(a, consumed=False):
         shutil.copy(d / f"{view}.png", d / f"{view}_edit.png")
         (d / "history").mkdir(exist_ok=True)
         shutil.copy(d / f"{view}.png", d / "history" / f"base_{view}.png")
-    show = IMAGES / a.name
-    show.mkdir(parents=True, exist_ok=True)
-    for p in [d / f"{view}.png" for view in VIEWS] + sorted(d.glob("corner_*.png")):
-        shutil.copy(p, show / p.name)
     loose = floating(g, bt)
     if loose.any():
         js, iss = np.nonzero(loose)
@@ -615,8 +610,7 @@ def stl(a):
     rec = np.zeros(len(tris), dtype=[("n", "<f4", 3), ("v", "<f4", (3, 3)), ("attr", "<u2")])
     rec["n"] = [t[0] for t in tris]
     rec["v"] = [t[1:] for t in tris]
-    STL.mkdir(parents=True, exist_ok=True)
-    path = STL / f"rods_{a.name}.stl"
+    path = CASES / a.name / "rock.stl"
     with path.open("wb") as f:
         f.write(b"rock_rods".ljust(80, b" "))
         f.write(np.uint32(len(tris)).tobytes())

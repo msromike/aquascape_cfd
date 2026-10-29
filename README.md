@@ -16,18 +16,20 @@ checked against a real tank. Treat the numbers as "which layout is better", not 
 
 Open tank, pumps only, 20 s average, looking down 1 in over the sand:
 
-![open tank, sand](flow_images/1_open_tank/top3_low.png)
+![open tank, sand](cases/1_open_tank/flow/top3_low.png)
 
 The same pumps with the rock in. Side cut through the main rock, looking from the right pane. The solid tan is the rock
 the cut passes through; the pale wash is all the rock behind the glass, the far one outlined solid, the near one dotted:
 
-![rock, side cut](flow_images/2_two_bommies/side3_far.png)
+![rock, side cut](cases/2_two_bommies/flow/side3_far.png)
 
 The rock itself, shaped as 1 in square rods and rendered in Blender:
 
-![rock from the right front](rock_images/two_bommies/corner_right_front.png)
+![rock from the right front](cases/2_two_bommies/rock/corner_right_front.png)
 
-Each `flow_images/*/` folder holds nine views plus `numbers.txt`.
+Each case is one folder in `cases/`: `rock/` (the rock's views and renders), `rock.stl`, and `flow/` (nine views plus
+`numbers.txt`). `3_nsa_test` is an open, holey scape copied by eye from a photo, run the same way for comparison: big
+openings carry 2-3 in/s, about what that spot gets with no rock at all.
 
 ## Videos
 
@@ -71,11 +73,11 @@ https://github.com/user-attachments/assets/df88e1ec-7b96-4f2d-b04e-c0fe462247af
 python src/cfd_tank.py prepare            # points FluidX3D's setup.cpp at src/cfd_tank.cpp, sets its defines
 # build FluidX3D (Release, x64)
 python src/cfd_tank.py run --case open_tank --t 90 --pumps "3:forward,32.5:left" --rfg-tilt 20
-python src/cfd_tank.py views --case open_tank --out flow_images/open_tank --title "Open tank"
-python src/rock_rods.py draw two_bommies  # the rock's views to paint on, and the Blender corners
-python src/rock_rods.py stl two_bommies
-python src/cfd_tank.py run --case rock --t 60 --warm open_tank --pumps "3:forward,32.5:left" --rfg-tilt 20 --stl stl/rods_two_bommies.stl
-python src/cfd_tank.py views --case rock --out flow_images/rock --title "With the rock"
+python src/cfd_tank.py views --case open_tank --out cases/1_open_tank/flow --title "Open tank"
+python src/rock_rods.py draw 2_two_bommies  # the rock's views to paint on, and the Blender corners
+python src/rock_rods.py stl 2_two_bommies
+python src/cfd_tank.py run --case rock --t 60 --warm open_tank --pumps "3:forward,32.5:left" --rfg-tilt 20 --stl cases/2_two_bommies/rock.stl
+python src/cfd_tank.py views --case rock --out cases/2_two_bommies/flow --title "With the rock"
 ```
 
 Raw fields land in `FluidX3D/bin/reef_out/<case>/` (about 140 MB a run). `--warm` starts a run from another's end
@@ -90,7 +92,8 @@ green 3 in, yellow 5, orange 8, red 10, purple 13; white cuts a rod out; a color
 overhangs) are set in words: `set NAME --x 14:18 --y 8:17 --bottom 3.5`. A floating check refuses rock with nothing
 holding it up. `stl` writes the shape for the flow run.
 
-`rock_rods/two_bommies/` is the shape in the pictures: heights.csv and bottoms.csv are the whole record.
+`cases/2_two_bommies/rock/` is the shape in the pictures: heights.csv and bottoms.csv are the whole record. A new
+case starts as a copy of an old case folder, renamed.
 
 ## What is in the pictures
 
@@ -105,13 +108,11 @@ holding it up. `stl` writes the shape for the flow run.
 
 ```
 src/        cfd_tank.py (prepare, run, views), cfd_tank.cpp (the FluidX3D setup), rock_rods.py (+ rock_rods_blender.py),
-            flow_anim.py (videos), no_rock_sweep.py (the pump placement sweep that picked the setup)
+            flow_anim.py (videos)
 tank/       holes.csv: return and drain positions
 notes/      how the pump and nozzle geometry were measured off vendor pictures, with the scripts
-rock_rods/  the rock as rods (csv) and its drawings
-rock_images/  Blender renders of the rock
-stl/        the rock for the solver
-flow_images/  1_open_tank, 2_two_bommies: nine views each; no_rock/ranking.csv: the pump sweep's numbers
+cases/      one folder per scenario: 1_open_tank, 2_two_bommies, 3_nsa_test; each rock/ (rods or the script that
+            made it, views, renders), rock.stl (what the solver loads), flow/ (nine views, numbers.txt; videos ignored)
 ```
 
 ## License

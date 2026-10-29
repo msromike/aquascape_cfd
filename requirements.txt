@@ -5,3 +5,5 @@ pillow
 imageio
 imageio-ffmpeg
 pymupdf
+trimesh
+manifold3d

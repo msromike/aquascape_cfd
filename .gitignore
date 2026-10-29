@@ -1,9 +1,6 @@
-# the rod tool's working pictures: made fresh by rock_rods.py draw; rock_images/ carries the copies to look at
-rock_rods/*/*.png
-rock_rods/*/history/
-
-# the open-tank sweep: ~110 pictures, redrawn by no_rock_sweep.py --views-only; ranking.csv is the record
-flow_images/no_rock/*/
+# the rod tool's paint canvases and history; the clean views and renders in rock/ are kept
+cases/*/rock/*_edit.png
+cases/*/rock/history/
 
 # videos: see README (the ones in the README are hosted by GitHub, not in git)
 *.mp4

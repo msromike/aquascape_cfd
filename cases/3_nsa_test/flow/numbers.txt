@@ -1,0 +1,8 @@
+Open 'NSA' rock (proof of concept): corner pumps 12.3 in up, left pump points forward, right pump points left, both on; RFG 20 deg
+tank mean: 4.8 in/s
+sand band, 0 to 3 in up: 4.0 in/s
+fastest water 0.5 in over the sand: 10 in/s
+dead sand 1 in up, under 1 in/s: 21 in², centered 23 in from the left pane, 12 in from the front glass
+water under 1 in/s: 2%
+water under 3 in/s: 30%
+case nsa_test_12p3_forward_left, mean over 40-60 s (81 samples)

@@ -5,7 +5,8 @@ Read this before touching the code. It is what the model that built this would w
 ## What it is
 
 A FluidX3D setup for a reef display tank, a Python driver, and a rock-shaping tool. One tank, one pump setup, one rock,
-all decided; the pictures in `flow_images/` are the result. Everything else is a path to regenerate or change them.
+all decided; each scenario is a folder in `cases/` (rock, rock.stl, flow pictures). Everything else is a path to
+regenerate or change them. A new scenario is a copy of a case folder, renamed; the rock is copied, never shared.
 
 ## How a run works
 

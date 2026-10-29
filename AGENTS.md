@@ -21,6 +21,8 @@ regenerate or change them. A new scenario is a copy of a case folder, renamed; t
 4. `views` loads `u_avg.bin` and draws nine pictures (`draw_nine`); `summary()` makes the numbers.
 
 Units: the solver works in metres and seconds; every number a person sees is inches and in/s. `IN = 0.0254`.
+Rock STLs are in millimetres, tank coordinates (x from the left pane, y from the front glass, z from the bottom
+glass), so viewers open them at true size; `cfd_tank.cpp` reads them with a 0.001 scale.
 
 ## Settings that were checked, and what they cost
 

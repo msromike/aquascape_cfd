@@ -1,4 +1,4 @@
-"""Render any case's rock.stl (tank metres) in the tank: front-on, and from the right front corner.
+"""Render any case's rock.stl (tank millimetres) in the tank: front-on, and from the right front corner.
 
     blender --background --factory-startup --python src/render_stl.py -- ABSOLUTE/cases/CASE/rock.stl ABSOLUTE/cases/CASE/rock
 (absolute paths: Blender resolves relative ones against the drive root)
@@ -37,7 +37,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 bpy.ops.wm.stl_import(filepath=args[0])
 rock = bpy.context.selected_objects[0]
-rock.scale = (1 / 0.0254,) * 3
+rock.scale = (1 / 25.4,) * 3   # mm to the scene's inches
 rock.data.materials.append(mat("rock", (0.86, 0.80, 0.68)))
 box("sand", 0, L, 0, W, 0, SAND, (0.80, 0.72, 0.56))
 t = 0.12

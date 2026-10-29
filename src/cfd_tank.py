@@ -18,7 +18,7 @@ Lid: FluidX3D walls are bounce-back only, so the water line is a no-slip lid; it
 Pumps: --pumps "x:way,x:way", upright Maxspect XF330 tubes on their mounts off the back glass, x in from the left pane,
 pointing left, right or forward (out at the front glass), or off (body only). Height: --gyre-z-in, default mid-water.
 Geometry GYRE_* from notes/xf330_outlet_geometry.md; rated flow out the slots.
-Rock: binary STL in tank metres (x from the left pane, y from the front glass, z from the bottom glass), from rock_rods.py.
+Rock: binary STL in tank millimetres (x from the left pane, y from the front glass, z from the bottom glass), from rock_rods.py.
 RFG: off unless --rfg-tilt; 20 deg (15 to 25) traced off the patent drawing, snap and hold times from US 11,071,990
 (notes/rfg_jet_pattern.md). The return enters at the 0.68 in throat.
 Warm start: --warm CASE starts the fluid from that case's last snapshot; same dx only.

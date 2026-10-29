@@ -1,7 +1,7 @@
 """Proof of concept: an open, "NSA"-style scape copied by eye from one photo of a build video, as a watertight STL for
 the flow model, for comparison with the solid two_bommies rock. Render it with render_stl.py.
 
-    python src/nsa_rock.py      -> cases/3_nsa_test/rock.stl (tank metres; needs trimesh and manifold3d)
+    python src/nsa_rock.py      -> cases/3_nsa_test/rock.stl (tank millimetres; needs trimesh and manifold3d)
 
 Read off the photo at about 46 px/in (table width ~ tank length), front-on, perspective ignored:
 left: a pillar with a boulder cap, a low mound, an arm bridging pillar to mound high up, a low rail between them, the arch
@@ -82,5 +82,5 @@ print(f"watertight {rock.is_watertight}, {len(rock.faces)} faces, volume over th
 lo, hi = rock.bounds
 print(f"x {lo[0]:.1f}-{hi[0]:.1f}, y {lo[1]:.1f}-{hi[1]:.1f}, z {lo[2]:.1f}-{hi[2]:.1f} in (top {hi[2] - SAND:.1f} in over the sand)")
 out = CASE / "rock.stl"
-rock.copy().apply_scale(IN).export(out)
+rock.copy().apply_scale(IN * 1000.0).export(out)
 print(out)
